@@ -55,7 +55,20 @@ app.post("/accounts", (req, res) => {
 // @route GET /accounts
 // @access public
 app.get("/accounts", (req, res) => {
-  res.status(200).json({ accounts: accountMap });
+  // Check if there are any accounts
+  if (accountMap.length === 0) {
+    return res.status(404).json({ error: "No accounts found" });
+  }
+  // Map the accounts to a simpler structure
+  const accounts = accountMap.map((account) => ({
+    accountNumber: account.accountNumber,
+    name: account.name,
+    balance: account.balance,
+    bvnVerification: account.bvnVerification,
+  }));
+
+  // Return the accounts
+  res.status(200).json({ accounts });
 });
 
 // @desc Get a particular account
@@ -110,22 +123,22 @@ app.put("/accounts/:accountNumber", (req, res) => {
 });
 
 // @desc Delete a particular account
-// @route DELETE /api/v1/accounts/:id
+// @route DELETE /accounts/:accountNumber
 // @access private
 app.delete("/accounts/:accountNumber", (req, res) => {
+  console.log(req.params.accountNumber);
   // Find the account by account number
   const account = accountMap.findIndex(
     (user) => user.accountNumber === parseInt(req.params.accountNumber)
   );
 
-  if (!account) {
-    return res.status(404).json({
-      error: `Accout not found!`,
-    });
+  // If account not found, return 404
+  if (account === -1) {
+    return res.status(404).json({ error: "Account not found" });
   }
 
   accountMap.splice(account, 1);
-  res.status(204).end();
+  res.status(204).send({ message: "Account Deleted Successfully" });
 });
 
 // Additional banking operations
