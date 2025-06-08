@@ -236,7 +236,29 @@ const server = app.listen(port, () => {
   console.log(`server runing on port ${port}`);
 });
 
-// handle unhandle rejecttion
-server.on("unhandledRejection", (error) => {
-  console.log("unhandlerejection", error.message);
+// Handle unhandled promise rejections
+process.on("unhandledRejection", (err) => {
+  console.error(`Unhandled Rejection: ${err.message}`);
+  // Close the server and exit the process
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+// Handle uncaught exceptions
+process.on("uncaughtException", (err) => {
+  console.error(`Uncaught Exception: ${err.message}`);
+  // Close the server and exit the process
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+// Handle SIGINT (Ctrl+C) to gracefully shut down the server
+process.on("SIGINT", () => {
+  console.log("SIGINT received. Shutting down gracefully...");
+  server.close(() => {
+    console.log("Server closed");
+    process.exit(0);
+  });
 });
