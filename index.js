@@ -1,8 +1,8 @@
-require("dotenv").config({});
+require("dotenv").config();
 const express = require("express");
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.API_PORT || 3000;
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -10,12 +10,10 @@ app.use(express.json());
 // In-memory database
 const accountMap = [];
 
+// Generate a random 10-digit account number as a string
 const generateAccountNumber = () => {
-  return Math.floor(1000000000 + Math.random() * 10000000000);
+  return Math.floor(1000000000 + Math.random() * 9000000000);
 };
-
-// Next id
-let nextId = Number(3);
 
 // @desc Create account for a user
 // @route POST /accounts
@@ -23,11 +21,13 @@ let nextId = Number(3);
 app.post("/accounts", (req, res) => {
   const { name, balance } = req.body;
 
-  //   check for the request if the parameters are given
-  if (!name || balance === undefined) {
-    return res
-      .status(400)
-      .json({ error: "Name and initialBalance are required!" });
+  //   check if the request is valid
+  if (
+    typeof name !== "string" ||
+    (typeof balance !== "number" && !name) ||
+    balance === undefined
+  ) {
+    return res.status(400).json({ error: "Name and Balance are required" });
   }
 
   //   create new account
@@ -45,18 +45,21 @@ app.post("/accounts", (req, res) => {
   res.status(201).json({ account: newAccount });
 });
 
-// @desc Show all accounts
-// @route GET /api/v1/accounts
-// @access private
-app.get("/api/v1/accounts", (req, res) => {
+// @desc Get All Accounts
+// @route GET /accounts
+// @access public
+app.get("/accounts", (req, res) => {
   res.status(200).json({ accounts: accountMap });
 });
 
 // @desc Get a particular account
-// @route GET /api/v1/accounts/:id
+// @route GET /accounts/:accountNumber
 // @access private
-app.get("/api/v1/accounts/:id", (req, res) => {
-  const account = accountMap.find((u) => u.id === parseInt(req.params.id));
+app.get("/accounts/:accountNumber", (req, res) => {
+  // Find the account by account number
+  const account = accountMap.find(
+    (user) => user.accountNumber === parseInt(req.params.accountNumber)
+  );
 
   if (!account) {
     return res.status(404).json({
