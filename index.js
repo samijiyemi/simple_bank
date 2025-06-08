@@ -1,3 +1,5 @@
+const path = require("path");
+const fs = require("fs");
 const express = require("express");
 
 const app = express();
@@ -7,22 +9,34 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 // In-memory database
-const accountMap = [
-  { id: 1, name: "ogbenisamu", balance: Number(100) },
-  { id: 2, name: "jane", balance: Number(200) },
-];
+const accountMap = [];
+
+// I want to create a file where i store all the account database there
+const filePath = "./accountMap.json";
+fs.writeFile(filePath, accountMap, "utf8", (err) => {
+  if (err) {
+    console.error(`Error writing to file: ${err.message}`);
+    return;
+  }
+
+  console.log(`File written successfully`);
+});
+
+const generateAccountNumber = () => {
+  return Math.floor(1000000000 + Math.random() * 10000000000);
+};
 
 // Next id
 let nextId = Number(3);
 
 // @desc Create account for a user
-// @route POST /api/v1/accounts
+// @route POST /accounts
 // @access public
-app.post("/api/v1/accounts", (req, res) => {
-  const { name, initialBalance } = req.body;
+app.post("/accounts", (req, res) => {
+  const { name, balance } = req.body;
 
   //   check for the request if the parameters are given
-  if (!name || initialBalance === undefined) {
+  if (!name || balance === undefined) {
     return res
       .status(400)
       .json({ error: "Name and initialBalance are required!" });
@@ -30,9 +44,10 @@ app.post("/api/v1/accounts", (req, res) => {
 
   //   create new account
   const newAccount = {
-    id: nextId++,
+    accountNumber: generateAccountNumber(),
     name,
-    balance: parseInt(initialBalance),
+    balance: parseInt(balance),
+    bvnVerification: false,
   };
 
   //   Add to the in-memory database
