@@ -1,5 +1,4 @@
-const path = require("path");
-const fs = require("fs");
+require("dotenv").config({});
 const express = require("express");
 
 const app = express();
@@ -10,17 +9,6 @@ app.use(express.json());
 
 // In-memory database
 const accountMap = [];
-
-// I want to create a file where i store all the account database there
-const filePath = "./accountMap.json";
-fs.writeFile(filePath, accountMap, "utf8", (err) => {
-  if (err) {
-    console.error(`Error writing to file: ${err.message}`);
-    return;
-  }
-
-  console.log(`File written successfully`);
-});
 
 const generateAccountNumber = () => {
   return Math.floor(1000000000 + Math.random() * 10000000000);
