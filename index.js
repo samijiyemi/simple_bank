@@ -2,13 +2,32 @@ import arcjet, { shield, detectBot, tokenBucket } from "@arcjet/node";
 import { isSpoofedBot } from "@arcjet/inspect";
 import express from "express";
 import dotenv from "dotenv";
-import { createContextLogger } from "./config/logger.js"; // Ensure logger is initialized
+import morgan from "morgan";
+import logger from "./config/logger.js";
+
+const morganFormat = ":method :url :status :response-time ms";
 
 import accountRoutes from "./routes/accountRoutes.js";
 
 dotenv.config({ path: "./config/.env" });
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(
+  morgan(morganFormat, {
+    stream: {
+      write: (message) => {
+        const logObject = {
+          method: message.split(" ")[0],
+          url: message.split(" ")[1],
+          status: message.split(" ")[2],
+          responseTime: message.split(" ")[3],
+        };
+        logger.info(JSON.stringify(logObject));
+      },
+    },
+  })
+);
 
 const aj = arcjet({
   // Get your site key from https://app.arcjet.com and set it as an environment
