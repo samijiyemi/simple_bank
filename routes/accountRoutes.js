@@ -1,16 +1,24 @@
-const express = require("express");
+import express from "express";
+import {
+  createAccount,
+  getAllAccounts,
+  getAccount,
+  updateAccount,
+  deleteAccount,
+  deposit,
+  withdraw,
+} from "../controllers/accountController.js";
+
 const router = express.Router();
-const accountController = require("../controllers/accountController");
 
 // Account routes
-router.post("/accounts", accountController.createAccount);
-router.get("/accounts", accountController.getAllAccounts);
-router.get("/accounts/:accountNumber", accountController.getAccount);
-router.put("/accounts/:accountNumber", accountController.updateAccount);
-router.delete("/accounts/:accountNumber", accountController.deleteAccount);
-router.post("/accounts/:accountNumber/deposit", accountController.deposit);
-router.post("/accounts/:accountNumber/withdraw", accountController.withdraw);
-router.post("/accounts/:accountNumber/transfer", accountController.transfer);
+router.post("/accounts", createAccount);
+router.get("/accounts", getAllAccounts);
+router.get("/accounts/:accountNumber", getAccount);
+router.put("/accounts/:accountNumber", updateAccount);
+router.delete("/accounts/:accountNumber", deleteAccount);
+router.post("/accounts/:accountNumber/deposit", deposit);
+router.post("/accounts/:accountNumber/withdraw", withdraw);
 // Add more routes as needed
 
-module.exports = router;
+export default router;

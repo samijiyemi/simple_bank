@@ -1,5 +1,4 @@
-// Controller for account-related operations
-const { generateAccountNumber, generateBVN } = require("../utils/generators");
+import { generateAccountNumber, generateBVN } from "../utils/generators.js";
 
 // In-memory database
 const accountMap = [];
@@ -9,7 +8,7 @@ const accountMap = [];
  * @route POST /accounts
  * @access public
  */
-exports.createAccount = (req, res) => {
+export const createAccount = (req, res) => {
   const { name, balance } = req.body;
   if (
     typeof name !== "string" ||
@@ -33,7 +32,7 @@ exports.createAccount = (req, res) => {
  * @route GET /accounts
  * @access public
  */
-exports.getAllAccounts = (req, res) => {
+export const getAllAccounts = (req, res) => {
   if (accountMap.length === 0) {
     return res.status(404).json({ error: "No accounts found" });
   }
@@ -51,7 +50,7 @@ exports.getAllAccounts = (req, res) => {
  * @route GET /accounts/:accountNumber
  * @access public/private
  */
-exports.getAccount = (req, res) => {
+export const getAccount = (req, res) => {
   const account = accountMap.find(
     (user) => user.accountNumber === parseInt(req.params.accountNumber)
   );
@@ -66,7 +65,7 @@ exports.getAccount = (req, res) => {
  * @route PUT /accounts/:accountNumber
  * @access public/private
  */
-exports.updateAccount = (req, res) => {
+export const updateAccount = (req, res) => {
   const account = accountMap.find(
     (user) => user.accountNumber === parseInt(req.params.accountNumber)
   );
@@ -92,7 +91,7 @@ exports.updateAccount = (req, res) => {
  * @route DELETE /accounts/:accountNumber
  * @access public/private
  */
-exports.deleteAccount = (req, res) => {
+export const deleteAccount = (req, res) => {
   const account = accountMap.findIndex(
     (user) => user.accountNumber === parseInt(req.params.accountNumber)
   );
@@ -108,7 +107,7 @@ exports.deleteAccount = (req, res) => {
  * @route POST /accounts/:accountNumber/deposit
  * @access public/private
  */
-exports.deposit = (req, res) => {
+export const deposit = (req, res) => {
   const account = accountMap.find(
     (user) => user.accountNumber === parseInt(req.params.accountNumber)
   );
@@ -128,7 +127,7 @@ exports.deposit = (req, res) => {
  * @route POST /accounts/:accountNumber/withdraw
  * @access public/private
  */
-exports.withdraw = (req, res) => {
+export const withdraw = (req, res) => {
   const account = accountMap.find(
     (user) => user.accountNumber === parseInt(req.params.accountNumber)
   );
@@ -155,7 +154,7 @@ exports.withdraw = (req, res) => {
  * @access public/private
  */
 
-exports.transfer = (req, res) => {
+export const transfer = (req, res) => {
   const fromAccount = accountMap.find(
     (user) => user.accountNumber === parseInt(req.params.accountNumber)
   );
@@ -188,4 +187,4 @@ exports.transfer = (req, res) => {
 };
 
 // You can add transfer and other operations similarly
-exports.accountMap = accountMap;
+export { accountMap };

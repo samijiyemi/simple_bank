@@ -1,14 +1,15 @@
-const express = require("express");
-// const path = require("path");
-require("dotenv").config({ path: "./config/.env" });
+import express from "express";
+import dotenv from "dotenv";
+import accountRoutes from "./routes/accountRoutes.js";
+
+dotenv.config();
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.API_PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Import routes
-const accountRoutes = require("./routes/accountRoutes");
 app.use("/", accountRoutes);
 
 // Error handling and server events
